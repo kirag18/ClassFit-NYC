@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run fetch:real && npm run load:data && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "gen:mock": "tsx scripts/generate-mock-data.ts",
