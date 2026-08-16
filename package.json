@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run fetch:real && npm run load:data && next build",
     "start": "next start",
     "lint": "eslint",
     "gen:mock": "tsx scripts/generate-mock-data.ts",
@@ -13,7 +13,6 @@
     "fetch:real": "tsx scripts/fetch-nyc-data.ts"
   },
   "dependencies": {
-    "better-sqlite3": "^13.0.3",
     "csv-parse": "^7.0.2",
     "leaflet": "^1.9.4",
     "next": "15.5.23",
@@ -24,9 +23,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^9.6.0",
     "@types/leaflet": "^1.9.22",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

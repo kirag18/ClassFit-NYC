@@ -25,7 +25,7 @@
 import { readFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
 import { parse } from "csv-parse/sync";
-import Database from "better-sqlite3";
+import { DatabaseSync } from "node:sqlite";
 
 const RAW_DIR = join(process.cwd(), "data", "raw");
 const DB_PATH = join(process.cwd(), "data", "classfit.db");
@@ -42,8 +42,20 @@ function readCsv(filename: string): Record<string, string>[] {
 }
 
 mkdirSync(join(process.cwd(), "data"), { recursive: true });
-const db = new Database(DB_PATH);
-db.pragma("journal_mode = WAL");
+const db = new DatabaseSync(DB_PATH);
+db.exec("PRAGMA journal_mode = WAL");
+
+/** node:sqlite has no .transaction() helper (unlike better-sqlite3) -- wrap manually. */
+function withTransaction(fn: () => void) {
+  db.exec("BEGIN");
+  try {
+    fn();
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
+}
 
 db.exec(`
 -- Child tables first. better-sqlite3 turns on PRAGMA foreign_keys by default,
@@ -150,8 +162,8 @@ const insertSchool = db.prepare(
   `INSERT INTO schools (dbn, name, borough, district, school_type, lat, lng, building_id, enrollment)
    VALUES (@dbn, @name, @borough, @district, @school_type, @lat, @lng, @building_id, @enrollment)`
 );
-const insertSchools = db.transaction((rows: Record<string, string>[]) => {
-  for (const r of rows) {
+withTransaction(() => {
+  for (const r of locations) {
     const enrollment = Number(r["Enrollment"]);
     insertSchool.run({
       dbn: r["DBN"],
@@ -166,7 +178,6 @@ const insertSchools = db.transaction((rows: Record<string, string>[]) => {
     });
   }
 });
-insertSchools(locations);
 
 // ---- class_size_records ----
 const classSizes = readCsv("class_size.csv");
@@ -174,8 +185,8 @@ const insertClassSize = db.prepare(
   `INSERT INTO class_size_records (dbn, grade_band, num_classes, num_students, avg_class_size, target_cap, source_year, data_quality)
    VALUES (@dbn, @grade_band, @num_classes, @num_students, @avg_class_size, @target_cap, @source_year, @data_quality)`
 );
-const insertClassSizes = db.transaction((rows: Record<string, string>[]) => {
-  for (const r of rows) {
+withTransaction(() => {
+  for (const r of classSizes) {
     insertClassSize.run({
       dbn: r["DBN"],
       grade_band: r["Grade Band"],
@@ -188,7 +199,6 @@ const insertClassSizes = db.transaction((rows: Record<string, string>[]) => {
     });
   }
 });
-insertClassSizes(classSizes);
 
 // ---- building_utilization ----
 const buildings = readCsv("building_utilization.csv");
@@ -196,8 +206,8 @@ const insertBuilding = db.prepare(
   `INSERT INTO building_utilization (building_id, capacity, enrollment, utilization_pct, co_located, num_schools_in_building)
    VALUES (@building_id, @capacity, @enrollment, @utilization_pct, @co_located, @num_schools_in_building)`
 );
-const insertBuildings = db.transaction((rows: Record<string, string>[]) => {
-  for (const r of rows) {
+withTransaction(() => {
+  for (const r of buildings) {
     const capacity = Number(r["Capacity"]);
     const enrollment = Number(r["Enrollment"]);
     insertBuilding.run({
@@ -210,19 +220,17 @@ const insertBuildings = db.transaction((rows: Record<string, string>[]) => {
     });
   }
 });
-insertBuildings(buildings);
 
 // ---- space_deficit_schools ----
 const deficits = readCsv("space_deficit_schools.csv");
 const insertDeficit = db.prepare(`INSERT OR IGNORE INTO space_deficit_schools (dbn) VALUES (?)`);
-const insertDeficits = db.transaction((rows: Record<string, string>[]) => {
-  for (const r of rows) {
+withTransaction(() => {
+  for (const r of deficits) {
     if (r["Confirmed Space Deficit"]?.toUpperCase() === "Y") {
       insertDeficit.run(r["DBN"]);
     }
   }
 });
-insertDeficits(deficits);
 
 // ---- room_inventory ----
 const rooms = readCsv("room_inventory.csv");
@@ -230,8 +238,8 @@ const insertRoom = db.prepare(
   `INSERT INTO room_inventory (building_id, room_type, room_count, typical_capacity, sqft)
    VALUES (@building_id, @room_type, @room_count, @typical_capacity, @sqft)`
 );
-const insertRooms = db.transaction((rows: Record<string, string>[]) => {
-  for (const r of rows) {
+withTransaction(() => {
+  for (const r of rooms) {
     // Blank capacity/sqft are stored as NULL rather than guessed: the
     // room-splitting tool needs real square footage, and inventing it would
     // make an unfounded feasibility claim.
@@ -244,7 +252,6 @@ const insertRooms = db.transaction((rows: Record<string, string>[]) => {
     });
   }
 });
-insertRooms(rooms);
 
 // ---- room_capacity_detail (optional) ----
 let capacityDetailCount = 0;
@@ -254,8 +261,8 @@ if (existsSync(join(RAW_DIR, "room_capacity_detail.csv"))) {
     `INSERT INTO room_capacity_detail (building_id, room_type, sqft, room_count)
      VALUES (@building_id, @room_type, @sqft, @room_count)`
   );
-  const insertDetails = db.transaction((rows: Record<string, string>[]) => {
-    for (const r of rows) {
+  withTransaction(() => {
+    for (const r of capacityDetail) {
       insertDetail.run({
         building_id: r["Building ID"],
         room_type: r["Room Type"],
@@ -264,7 +271,6 @@ if (existsSync(join(RAW_DIR, "room_capacity_detail.csv"))) {
       });
     }
   });
-  insertDetails(capacityDetail);
   capacityDetailCount = capacityDetail.length;
 }
 
@@ -276,8 +282,8 @@ if (existsSync(join(RAW_DIR, "nearby_parcels.csv"))) {
     `INSERT OR REPLACE INTO parcels (parcel_id, description, district, lat, lng, lot_sqft, borough, bbl, ownership)
      VALUES (@parcel_id, @description, @district, @lat, @lng, @lot_sqft, @borough, @bbl, @ownership)`
   );
-  const insertParcels = db.transaction((rows: Record<string, string>[]) => {
-    for (const r of rows) {
+  withTransaction(() => {
+    for (const r of parcels) {
       insertParcel.run({
         parcel_id: r["Parcel ID"],
         description: r["Description"] || null,
@@ -291,7 +297,6 @@ if (existsSync(join(RAW_DIR, "nearby_parcels.csv"))) {
       });
     }
   });
-  insertParcels(parcels);
   parcelCount = parcels.length;
 }
 
