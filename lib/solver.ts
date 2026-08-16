@@ -33,7 +33,7 @@ const ROOM_PRIORITY: { type: string; rank: number; verb: (count: number) => stri
     verb: (n) =>
       `Convert ${n} cluster/specialty room period${n === 1 ? "" : "s"} to homeroom instruction`,
     tradeoff:
-      "The Blue Book doesn't say which specialty subjects these rooms serve — confirm locally which programs would be displaced.",
+      "The Blue Book doesn't say which specialty subjects these rooms serve, so confirm locally which programs would be displaced.",
   },
   {
     type: "Library",

@@ -3,34 +3,27 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { BookIcon, LogoMark, MapIcon } from "./icons";
 
 const NAV = [
   {
     href: "/",
-    label: "Map & Search",
+    label: "Map and search",
     match: (p: string) => p === "/" || p.startsWith("/school"),
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.8" stroke="currentColor" className="w-[18px] h-[18px]">
-        <path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    Icon: MapIcon,
   },
   {
     href: "/admin-guide",
-    label: "Administrator Guide",
+    label: "Administrator guide",
     match: (p: string) => p.startsWith("/admin-guide"),
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.8" stroke="currentColor" className="w-[18px] h-[18px]">
-        <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25a8.988 8.988 0 0 0-3-.512c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    Icon: BookIcon,
   },
 ];
 
 const PAGE_LABELS: [(p: string) => boolean, string][] = [
   [(p) => p === "/", "Overview"],
   [(p) => p.startsWith("/school/"), "School detail"],
-  [(p) => p.startsWith("/admin-guide"), "Administrator Guide"],
+  [(p) => p.startsWith("/admin-guide"), "Administrator guide"],
 ];
 
 function currentLabel(pathname: string) {
@@ -43,80 +36,57 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen lg:flex">
       {/* Sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:shrink-0 lg:flex-col lg:sticky lg:top-0 lg:h-screen border-r border-white/10 px-4 py-6">
-        <Link href="/" className="flex items-center gap-2.5 px-2 mb-8">
-          <span className="grid place-items-center w-9 h-9 rounded-xl gradient-accent shrink-0">
-            <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" stroke="white" className="w-5 h-5">
-              <path d="M12 3 3 8l9 5 9-5-9-5Z" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M3 8v8l9 5 9-5V8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
+      <aside className="hidden lg:flex lg:w-60 lg:shrink-0 lg:flex-col lg:sticky lg:top-0 lg:h-screen border-r border-line px-3 py-5">
+        <Link href="/" className="flex items-center gap-2.5 px-2 mb-7">
+          <LogoMark className="w-6 h-6 text-accent shrink-0" />
           <span className="leading-tight">
-            <span className="block text-sm font-semibold text-white">ClassFit NYC</span>
-            <span className="block text-[11px] text-white/40">Mandate compliance explorer</span>
+            <span className="block text-sm font-semibold text-ink">ClassFit NYC</span>
+            <span className="block text-[11px] text-ink-soft">Class size mandate explorer</span>
           </span>
         </Link>
 
-        <nav className="flex flex-col gap-1">
-          <div className="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-white/35">
-            Main menu
-          </div>
-          {NAV.map((item) => {
-            const active = item.match(pathname);
+        <nav className="flex flex-col gap-0.5">
+          {NAV.map(({ href, label, match, Icon }) => {
+            const active = match(pathname);
             return (
               <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                key={href}
+                href={href}
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
                   active
-                    ? "bg-white/10 text-white"
-                    : "text-white/55 hover:text-white hover:bg-white/5"
+                    ? "bg-accent-soft text-accent font-semibold"
+                    : "text-ink-soft font-medium hover:bg-paper-sunk hover:text-ink"
                 }`}
               >
-                <span className={active ? "text-violet-300" : "text-white/40"}>{item.icon}</span>
-                {item.label}
+                <Icon className="w-[18px] h-[18px] shrink-0" />
+                {label}
               </Link>
             );
           })}
         </nav>
-
-        <div className="mt-auto pt-6">
-          <div className="panel px-4 py-4">
-            <p className="text-xs font-medium text-white/80">Data vintage</p>
-            <p className="mt-1 text-[11px] leading-relaxed text-white/45">
-              Class size figures come from the most recent NYC Open Data reports — historical
-              baselines, not live compliance status.
-            </p>
-          </div>
-        </div>
       </aside>
 
       {/* Main column */}
       <div className="flex-1 min-w-0 flex flex-col">
-        <header className="sticky top-0 z-[1000] border-b border-white/10 bg-[#0d0817]/70 backdrop-blur-xl">
-          <div className="flex items-center justify-between gap-4 px-4 sm:px-6 py-3.5">
-            <div className="min-w-0">
-              <div className="text-[11px] text-white/40 truncate">
-                ClassFit NYC / <span className="text-white/70">{currentLabel(pathname)}</span>
-              </div>
-              <div className="lg:hidden flex items-center gap-2 mt-1">
-                <span className="text-sm font-semibold text-white">ClassFit NYC</span>
+        <header className="sticky top-0 z-[1000] border-b border-line bg-paper">
+          <div className="flex items-center justify-between gap-4 px-4 sm:px-6 py-3">
+            <div className="min-w-0 flex items-center gap-2">
+              <LogoMark className="lg:hidden w-5 h-5 text-accent shrink-0" />
+              <div className="text-xs text-ink-soft truncate">
+                <span className="lg:hidden font-semibold text-ink">ClassFit NYC</span>
+                <span className="hidden lg:inline">ClassFit NYC</span>{" "}
+                <span className="text-line-strong">/</span>{" "}
+                <span className="text-ink font-medium">{currentLabel(pathname)}</span>
               </div>
             </div>
-            <nav className="lg:hidden flex items-center gap-3 text-xs font-medium text-white/60 shrink-0">
-              <Link href="/" className="hover:text-white">
+            <nav className="lg:hidden flex items-center gap-4 text-xs font-medium text-ink-soft shrink-0">
+              <Link href="/" className="hover:text-ink">
                 Map
               </Link>
-              <Link href="/admin-guide" className="hover:text-white">
+              <Link href="/admin-guide" className="hover:text-ink">
                 Guide
               </Link>
             </nav>
-            <Link
-              href="/admin-guide"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-full gradient-accent text-white text-xs font-semibold px-4 py-2 shadow-lg shadow-violet-900/30 hover:opacity-90 transition-opacity shrink-0"
-            >
-              Administrator guide
-            </Link>
           </div>
         </header>
         <main className="flex-1 flex flex-col min-w-0">{children}</main>

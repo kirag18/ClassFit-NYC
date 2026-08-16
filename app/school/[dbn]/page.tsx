@@ -9,6 +9,18 @@ import {
 import { generateFastTrackSuggestions } from "@/lib/solver";
 import SpaceToolkit from "@/components/SpaceToolkit";
 import LongerTermSolutions from "@/components/LongerTermSolutions";
+import { AlertIcon, ArrowLeftIcon, InfoIcon } from "@/components/icons";
+
+/** Small labelled figure used across the two stat rows. */
+function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
+  return (
+    <div>
+      <div className="text-xs text-ink-soft">{label}</div>
+      <div className="text-lg font-semibold text-ink tabular-nums mt-0.5">{value}</div>
+      {note && <div className="text-xs text-ink-soft mt-0.5">{note}</div>}
+    </div>
+  );
+}
 
 export default async function SchoolDetailPage({
   params,
@@ -48,116 +60,142 @@ export default async function SchoolDetailPage({
   const siteCandidates = findSiteCandidates(school.dbn).slice(0, 3);
 
   return (
-    <div className="mx-auto max-w-4xl w-full px-6 py-6 space-y-6">
-      <div>
-        <Link href="/" className="text-sm text-violet-300 hover:underline">
-          ← Back to map &amp; search
-        </Link>
-      </div>
+    <div className="mx-auto max-w-4xl w-full px-4 sm:px-6 py-6 space-y-5">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+      >
+        <ArrowLeftIcon className="w-4 h-4" />
+        Back to map and search
+      </Link>
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">{school.name}</h1>
-          <p className="text-sm text-white/50 mt-1">
-            {school.dbn} &middot; {school.school_type} &middot; District {school.district} &middot;{" "}
-            {school.borough}
+          <h1 className="text-2xl font-semibold text-ink tracking-tight">{school.name}</h1>
+          <p className="text-sm text-ink-soft mt-1">
+            {school.dbn}, {school.school_type}, District {school.district}, {school.borough}
           </p>
         </div>
         <span
-          className="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full"
-          style={{ backgroundColor: `${overallStatus.color}26`, color: overallStatus.color }}
+          className="inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full"
+          style={{ backgroundColor: `${overallStatus.color}1a`, color: overallStatus.color }}
         >
-          <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: overallStatus.color }} />
+          <span
+            className="inline-block w-2 h-2 rounded-full"
+            style={{ backgroundColor: overallStatus.color }}
+          />
           {overallStatus.label}
         </span>
       </div>
 
       {isDeficitFlagged && (
-        <div className="rounded-2xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          <strong>NYCPS confirmed space deficit:</strong> this school appears on NYC Public
-          Schools&apos; own list of buildings with confirmed classroom space deficits.
+        <div className="flex gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <AlertIcon className="w-4 h-4 shrink-0 mt-0.5" />
+          <p>
+            <span className="font-semibold">NYCPS confirmed space deficit.</span> This school appears
+            on NYC Public Schools&apos; own list of buildings with confirmed classroom space
+            deficits.
+          </p>
         </div>
       )}
 
       {physicalCapacityCheck && (
         <div
-          className={`rounded-2xl border px-4 py-3 text-sm ${
+          className={`flex gap-2.5 rounded-lg border px-4 py-3 text-sm ${
             physicalCapacityCheck.feasible
-              ? "border-sky-500/25 bg-sky-500/10 text-sky-200"
-              : "border-red-500/25 bg-red-500/10 text-red-300"
+              ? "border-sky-200 bg-sky-50 text-sky-900"
+              : "border-red-200 bg-red-50 text-red-800"
           }`}
         >
           {physicalCapacityCheck.feasible ? (
-            <>
-              <strong>This is a scheduling problem, not a space problem.</strong> High school class
-              size is reported per course section, and the average above ({worstBand?.avg_class_size.toFixed(1)}{" "}
-              students/section) reflects too few, too-large sections — not a lack of rooms. This
-              building has {physicalCapacityCheck.roomsCounted} classrooms with a combined capacity
-              of ~{physicalCapacityCheck.totalCapacity.toLocaleString()} students at the mandate cap of{" "}
-              {physicalCapacityCheck.targetCap}, comfortably above the {physicalCapacityCheck.enrollment.toLocaleString()}{" "}
-              students actually enrolled. Scheduling more, smaller sections across the rooms already
-              available would bring every section under cap without any construction.
-            </>
+            <InfoIcon className="w-4 h-4 shrink-0 mt-0.5" />
           ) : (
-            <>
-              <strong>This is a real space shortfall, not just a scheduling issue.</strong> Even
-              spreading all {physicalCapacityCheck.enrollment.toLocaleString()} enrolled students
-              across all {physicalCapacityCheck.roomsCounted} classrooms at full capacity, this
-              building can only seat ~{physicalCapacityCheck.totalCapacity.toLocaleString()} students
-              under the mandate cap of {physicalCapacityCheck.targetCap} — short by{" "}
-              {physicalCapacityCheck.excessStudents.toLocaleString()} students, or roughly{" "}
-              {physicalCapacityCheck.classroomsNeeded} more classroom
-              {physicalCapacityCheck.classroomsNeeded === 1 ? "" : "s"}.
-            </>
+            <AlertIcon className="w-4 h-4 shrink-0 mt-0.5" />
           )}
-          <p className="mt-1.5 text-xs opacity-80">
-            Based on real Blue Book enrollment and per-room measured floor area (20 sqft/pupil), not
-            the course-section average shown below. See the room math in the space toolkit.
-          </p>
+          <div>
+            {physicalCapacityCheck.feasible ? (
+              <p>
+                <span className="font-semibold">
+                  This is a scheduling problem, not a space problem.
+                </span>{" "}
+                High school class size is reported per course section, and the average below (
+                {worstBand?.avg_class_size.toFixed(1)} students per section) reflects too few,
+                too-large sections rather than a lack of rooms. This building has{" "}
+                {physicalCapacityCheck.roomsCounted} classrooms with a combined capacity of about{" "}
+                {physicalCapacityCheck.totalCapacity.toLocaleString()} students at the mandate cap of{" "}
+                {physicalCapacityCheck.targetCap}, comfortably above the{" "}
+                {physicalCapacityCheck.enrollment.toLocaleString()} students actually enrolled.
+                Scheduling more, smaller sections across the rooms already available would bring
+                every section under cap without any construction.
+              </p>
+            ) : (
+              <p>
+                <span className="font-semibold">
+                  This is a real space shortfall, not just a scheduling issue.
+                </span>{" "}
+                Even spreading all {physicalCapacityCheck.enrollment.toLocaleString()} enrolled
+                students across all {physicalCapacityCheck.roomsCounted} classrooms at full
+                capacity, this building can only seat about{" "}
+                {physicalCapacityCheck.totalCapacity.toLocaleString()} students under the mandate cap
+                of {physicalCapacityCheck.targetCap}. That leaves it short by{" "}
+                {physicalCapacityCheck.excessStudents.toLocaleString()} students, or roughly{" "}
+                {physicalCapacityCheck.classroomsNeeded} more classroom
+                {physicalCapacityCheck.classroomsNeeded === 1 ? "" : "s"}.
+              </p>
+            )}
+            <p className="mt-1.5 text-xs opacity-80">
+              Based on real Blue Book enrollment and per-room measured floor area (20 sqft per
+              pupil), not the course-section average shown below. The room math is in the space
+              toolkit.
+            </p>
+          </div>
         </div>
       )}
 
       {/* Class size vs. cap by grade band */}
       <section className="panel p-5">
-        <h2 className="text-base font-semibold text-white mb-3">
-          Class size vs. mandate cap by grade band
+        <h2 className="text-base font-semibold text-ink mb-4">
+          Class size against mandate cap, by grade band
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-5">
           {bands.map((b) => {
             const status = getComplianceStatus(b.avg_class_size - b.target_cap);
             return (
-              <div key={b.grade_band} className="border-b border-white/10 last:border-0 pb-4 last:pb-0">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-medium text-white/90">
+              <div key={b.grade_band}>
+                <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+                  <span className="font-medium text-ink">
                     Grades {b.grade_band}
                     {b.source_year && (
-                      <span className="ml-2 text-xs font-normal text-white/35">
+                      <span className="ml-2 text-xs font-normal text-ink-soft">
                         {b.source_year} data
                       </span>
                     )}
                   </span>
-                  <span className="text-sm text-white/50">
+                  <span className="text-xs text-ink-soft tabular-nums">
                     {b.num_classes.toLocaleString()}{" "}
-                    {isCourseSectionBand(b.grade_band) ? "core sections" : "classes"} &middot;{" "}
+                    {isCourseSectionBand(b.grade_band) ? "core sections" : "classes"},{" "}
                     {b.num_students.toLocaleString()}{" "}
                     {isCourseSectionBand(b.grade_band) ? "student course seats" : "students"}
                   </span>
                 </div>
                 {isCourseSectionBand(b.grade_band) && (
-                  <p className="text-xs text-white/50 mb-1.5">
-                    High school figures count core <em>course sections</em>, so one student
-                    taking five core courses appears five times. The average is still
-                    seats ÷ sections; the totals are not headcount.
+                  <p className="text-xs text-ink-soft mb-2 leading-relaxed">
+                    High school figures count core <em>course sections</em>, so one student taking
+                    five core courses appears five times. The average is still seats divided by
+                    sections; the totals are not headcount.
                   </p>
                 )}
                 {b.data_quality === "suspect" && (
-                  <div className="mb-1.5 text-xs text-amber-200 bg-amber-500/10 border border-amber-500/25 rounded px-2 py-1">
-                    ⚠ The source dataset reports an implausible average here (students appear
-                    attributed to too few sections). Treat this figure as unreliable.
+                  <div className="mb-2 flex gap-2 text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded px-2 py-1.5">
+                    <AlertIcon className="w-3.5 h-3.5 shrink-0 mt-px" />
+                    <span>
+                      The source dataset reports an implausible average here (students appear
+                      attributed to too few sections). Treat this figure as unreliable.
+                    </span>
                   </div>
                 )}
-                <div className="flex items-center gap-2 mb-1.5">
-                  <div className="flex-1 h-2.5 rounded-full bg-white/10 overflow-hidden">
+                <div className="flex items-center gap-3 mb-1.5">
+                  <div className="flex-1 h-2 rounded-full bg-paper-sunk overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{
@@ -166,88 +204,75 @@ export default async function SchoolDetailPage({
                       }}
                     />
                   </div>
-                  <span className="text-sm font-semibold text-white tabular-nums w-24 text-right">
+                  <span className="text-sm font-semibold text-ink tabular-nums w-24 text-right">
                     {b.avg_class_size.toFixed(1)} / {b.target_cap}
                   </span>
                 </div>
-                <p className="text-sm text-white/65">{plainLanguageStatus(b.avg_class_size, b.target_cap)}</p>
+                <p className="text-sm text-ink-soft">
+                  {plainLanguageStatus(b.avg_class_size, b.target_cap)}
+                </p>
               </div>
             );
           })}
-          {bands.length === 0 && <p className="text-sm text-white/50">No class size data on file.</p>}
+          {bands.length === 0 && (
+            <p className="text-sm text-ink-soft">No class size data on file.</p>
+          )}
         </div>
       </section>
 
       {/* Building utilization */}
       <section className="panel p-5">
-        <h2 className="text-base font-semibold text-white mb-3">Building utilization</h2>
+        <h2 className="text-base font-semibold text-ink mb-4">Building utilization</h2>
         {building ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-            <div>
-              <div className="text-white/50">Utilization</div>
-              <div className="text-lg font-semibold text-white">{building.utilization_pct}%</div>
-            </div>
-            <div>
-              <div className="text-white/50">
-                Building enrollment
-                {/* co_located comes out of SQLite as 0/1: `0 && <span>` would
-                    render the literal "0", so coerce to a real boolean. */}
-                {!!building.co_located && <span className="text-white/35"> (shared)</span>}
-              </div>
-              <div className="text-lg font-semibold text-white">{building.enrollment}</div>
-            </div>
-            <div>
-              <div className="text-white/50">Target capacity</div>
-              <div className="text-lg font-semibold text-white">{building.capacity}</div>
-            </div>
-            <div>
-              <div className="text-white/50">Co-located</div>
-              <div className="text-lg font-semibold text-white">
-                {building.co_located ? `Yes (${building.num_schools_in_building} schools)` : "No"}
-              </div>
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <Stat label="Utilization" value={`${building.utilization_pct}%`} />
+            <Stat
+              label={`Building enrollment${building.co_located ? " (shared)" : ""}`}
+              value={building.enrollment.toLocaleString()}
+            />
+            <Stat label="Target capacity" value={building.capacity.toLocaleString()} />
+            <Stat
+              label="Co-located"
+              value={
+                building.co_located ? `Yes, ${building.num_schools_in_building} schools` : "No"
+              }
+            />
           </div>
         ) : (
-          <p className="text-sm text-white/50 mb-2">No Blue Book utilization data on file for this building.</p>
+          <p className="text-sm text-ink-soft">
+            No Blue Book utilization data on file for this building.
+          </p>
         )}
 
         {/* School-specific stats, as opposed to the building-level figures above. */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mt-4 pt-4 border-t border-white/10">
-          <div>
-            <div className="text-white/50">This school&apos;s enrollment</div>
-            <div className="text-lg font-semibold text-white">
-              {school.enrollment != null ? school.enrollment.toLocaleString() : "—"}
-            </div>
-            {school.enrollment == null && (
-              <div className="text-xs text-white/35">not in the Blue Book</div>
-            )}
-          </div>
-          <div>
-            <div className="text-white/50">Standard classrooms</div>
-            <div className="text-lg font-semibold text-white">
-              {standardRoomCount > 0 ? standardRoomCount.toLocaleString() : "—"}
-            </div>
-            {standardRoomCount === 0 && <div className="text-xs text-white/35">no room data</div>}
-          </div>
-          <div>
-            <div className="text-white/50">Cafeteria size</div>
-            <div className="text-lg font-semibold text-white">
-              {cafeteriaRoom?.sqft ? `${cafeteriaRoom.sqft.toLocaleString()} sqft` : "—"}
-            </div>
-            {!cafeteriaRoom?.sqft && <div className="text-xs text-white/35">no cafeteria on record</div>}
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-5 pt-5 border-t border-line">
+          <Stat
+            label="This school's enrollment"
+            value={school.enrollment != null ? school.enrollment.toLocaleString() : "None"}
+            note={school.enrollment == null ? "not in the Blue Book" : undefined}
+          />
+          <Stat
+            label="Standard classrooms"
+            value={standardRoomCount > 0 ? standardRoomCount.toLocaleString() : "None"}
+            note={standardRoomCount === 0 ? "no room data" : undefined}
+          />
+          <Stat
+            label="Cafeteria size"
+            value={cafeteriaRoom?.sqft ? `${cafeteriaRoom.sqft.toLocaleString()} sqft` : "None"}
+            note={!cafeteriaRoom?.sqft ? "no cafeteria on record" : undefined}
+          />
         </div>
-        <p className="text-xs text-white/35 mt-2">
+        <p className="text-xs text-ink-soft mt-3">
           Room and cafeteria figures are measured floor area from DOE building space records, not
-          headcount — see the space toolkit below for what they mean for capacity.
+          headcount. The space toolkit below turns them into capacity.
         </p>
       </section>
 
       {/* Space toolkit: room splitting, extended day, teacher need */}
       <section className="panel p-5">
-        <h2 className="text-base font-semibold text-white mb-1">Space toolkit</h2>
-        <p className="text-sm text-white/50 mb-4">
-          Where the capacity could come from in the building you already have — and what staffing it
+        <h2 className="text-base font-semibold text-ink">Space toolkit</h2>
+        <p className="text-sm text-ink-soft mt-1 mb-4">
+          Where the capacity could come from in the building you already have, and what staffing it
           would take.
         </p>
         <SpaceToolkit
@@ -260,7 +285,6 @@ export default async function SchoolDetailPage({
       </section>
 
       <LongerTermSolutions nearbyOptions={nearbyOptions} siteCandidates={siteCandidates} />
-
     </div>
   );
 }

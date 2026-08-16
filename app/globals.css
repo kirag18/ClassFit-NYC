@@ -1,59 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0d0817;
-  --foreground: #f4f2fb;
+  /* Bright academic palette: paper white, ink text, one navy accent.
+     Semantic colour is reserved for compliance status so it always means
+     something. */
+  --paper: #ffffff;
+  --paper-sunk: #f6f6f3;
+  --ink: #14181f;
+  --ink-soft: #4a5261;
+  --line: #e3e3dd;
+  --line-strong: #cfcfc7;
+  --accent: #16325c;
+  --accent-soft: #eef2f8;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  background:
-    radial-gradient(1100px 620px at 88% -8%, rgba(168, 120, 255, 0.28), transparent 60%),
-    radial-gradient(900px 560px at -10% 12%, rgba(45, 212, 191, 0.16), transparent 55%),
-    radial-gradient(1200px 800px at 50% 120%, rgba(124, 58, 237, 0.18), transparent 60%),
-    var(--background);
-  background-attachment: fixed;
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Reusable glass card used across the app in place of the old white/border cards */
+/* Flat card. A hairline rule, no shadow, no blur: the border does the work. */
 .panel {
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.045);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.55);
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--paper);
 }
 
-.gradient-accent {
-  background-image: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 45%, #2dd4bf 100%);
-}
-
-.gradient-accent-text {
-  background-image: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 45%, #5eead4 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Recessed variant for nested lists and secondary blocks. */
+.panel-sunk {
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--paper-sunk);
 }
 
 ::selection {
-  background: rgba(167, 139, 250, 0.35);
+  background: #d8e3f4;
 }
 
-/* Slim, unobtrusive scrollbars that fit the dark theme */
+/* Slim scrollbars that read as part of the page, not the OS. */
 * {
-  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  scrollbar-color: var(--line-strong) transparent;
   scrollbar-width: thin;
 }
 *::-webkit-scrollbar {
@@ -61,35 +65,46 @@ body {
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--line-strong);
   border-radius: 999px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: #b4b4aa;
 }
 
-/* Leaflet popups should inherit the app's font/sizing, and match the dark theme
-   instead of Leaflet's default white box. */
+/* Leaflet should inherit the app's type and light surfaces rather than its own
+   default chrome. */
 .leaflet-popup-content {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  margin: 10px 12px;
+  margin: 12px 14px;
 }
 .leaflet-popup-content-wrapper {
-  background: #1a1330;
-  color: #f4f2fb;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px -12px rgba(20, 24, 31, 0.25);
 }
 .leaflet-popup-tip {
-  background: #1a1330;
+  background: var(--paper);
 }
 .leaflet-popup-close-button {
-  color: rgba(244, 242, 251, 0.6) !important;
+  color: var(--ink-soft) !important;
 }
 .leaflet-popup-close-button:hover {
-  color: #f4f2fb !important;
+  color: var(--ink) !important;
 }
 .leaflet-container {
-  background: #150e26 !important;
+  background: var(--paper-sunk) !important;
+}
+.leaflet-bar a {
+  color: var(--ink) !important;
+  border-bottom-color: var(--line) !important;
+}
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: var(--ink-soft) !important;
+}
+.leaflet-control-attribution a {
+  color: var(--accent) !important;
 }
