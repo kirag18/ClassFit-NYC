@@ -27,7 +27,7 @@ export function isCourseSectionBand(gradeBand: string): boolean {
 
 export function formatGap(gap: number): string {
   if (gap <= 0) return "At or under cap";
-  return `${gap.toFixed(1)} over cap`;
+  return `${gap.toFixed(1)} over`;
 }
 
 /**
@@ -58,23 +58,23 @@ export function additionalSectionsNeeded(
  * a room shortfall as a class-size one.
  */
 export function formatPhysicalCapacityGap(check: { feasible: boolean; classroomsNeeded: number }): string {
-  if (check.feasible) return "Fits in existing rooms";
-  return `${check.classroomsNeeded} more room${check.classroomsNeeded === 1 ? "" : "s"} needed`;
+  if (check.feasible) return "Rooms fit";
+  return `${check.classroomsNeeded} room${check.classroomsNeeded === 1 ? "" : "s"} short`;
 }
 
 /**
  * Plain-language one-liner for a single grade band, e.g.:
- * "27 students, target is 25 — needs to cut ~2 students per class on average."
+ * "27 students per class against a target of 25, so about 2 fewer per class."
  */
 export function plainLanguageStatus(avgClassSize: number, targetCap: number): string {
   const gap = avgClassSize - targetCap;
   const rounded = Math.round(avgClassSize);
   const capRounded = Math.round(targetCap);
   if (gap <= 0) {
-    return `${rounded} students, target is ${capRounded} — already within the mandated cap.`;
+    return `${rounded} students per class against a target of ${capRounded}, already within the mandated cap.`;
   }
   const cut = Math.ceil(gap);
-  return `${rounded} students, target is ${capRounded} — needs to cut ~${cut} student${
+  return `${rounded} students per class against a target of ${capRounded}, so about ${cut} fewer student${
     cut === 1 ? "" : "s"
   } per class on average.`;
 }

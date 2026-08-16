@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { SchoolSummary } from "@/lib/types";
 import { getComplianceStatus, formatGap, formatPhysicalCapacityGap } from "@/lib/compliance";
+import { ArrowRightIcon } from "./icons";
 
 const NYC_CENTER: [number, number] = [40.7128, -73.98];
 
@@ -55,26 +56,26 @@ function SchoolMarkers({
             center={[s.lat, s.lng]}
             radius={isHighlighted ? radius + 4 : radius}
             pathOptions={{
-              color: isHighlighted ? "#f4f2fb" : status.color,
-              weight: isHighlighted ? 3 : 0.5,
+              color: isHighlighted ? "#14181f" : "#ffffff",
+              weight: isHighlighted ? 2 : 0.75,
               fillColor: status.color,
-              fillOpacity: 0.85,
+              fillOpacity: 0.9,
             }}
           >
             <Popup>
               <div className="text-sm">
-                <div className="font-semibold text-white">{s.name}</div>
-                <div className="text-white/45 text-xs mb-1">
-                  {s.dbn} &middot; District {s.district} &middot; {s.borough}
+                <div className="font-semibold text-ink">{s.name}</div>
+                <div className="text-ink-soft text-xs mb-1.5">
+                  {s.dbn}, District {s.district}, {s.borough}
                 </div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <span
                     className="inline-block w-2.5 h-2.5 rounded-full"
                     style={{ backgroundColor: status.color }}
                   />
-                  <span className="text-white/80">{status.label}</span>
+                  <span className="text-ink">{status.label}</span>
                 </div>
-                <div className="text-xs text-white/60 mb-2">
+                <div className="text-xs text-ink-soft mb-2">
                   {s.physicalCapacityCheck
                     ? `${s.worstBand}: ${formatPhysicalCapacityGap(s.physicalCapacityCheck)}`
                     : s.worstBand
@@ -83,9 +84,10 @@ function SchoolMarkers({
                 </div>
                 <Link
                   href={`/school/${s.dbn}`}
-                  className="text-violet-300 hover:text-violet-200 hover:underline text-xs font-medium"
+                  className="inline-flex items-center gap-1 text-accent hover:underline text-xs font-semibold"
                 >
-                  View school details →
+                  View school details
+                  <ArrowRightIcon className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </Popup>
@@ -108,11 +110,11 @@ export default function SchoolMap({
       center={NYC_CENTER}
       zoom={11}
       scrollWheelZoom
-      className="h-full w-full rounded-xl"
+      className="h-full w-full rounded-lg"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
       <FitToSchools schools={schools} />
       <SchoolMarkers schools={schools} highlightedDbn={highlightedDbn} />
