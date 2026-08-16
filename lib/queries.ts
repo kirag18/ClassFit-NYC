@@ -214,12 +214,16 @@ export function getSchoolDetail(dbn: string): SchoolDetail | null {
     .prepare(`SELECT dbn FROM space_deficit_schools WHERE dbn = ?`)
     .get(dbn);
 
+  // node:sqlite rows carry a null prototype, which React's Server->Client
+  // Component serialization rejects ("Classes or null prototypes are not
+  // supported"). Spreading each row into a fresh object literal fixes that
+  // (object literals always get the normal Object.prototype).
   return {
-    school,
-    bands,
-    building: building ?? null,
-    rooms,
-    capacityDetail,
+    school: { ...school },
+    bands: bands.map((b) => ({ ...b })),
+    building: building ? { ...building } : null,
+    rooms: rooms.map((r) => ({ ...r })),
+    capacityDetail: capacityDetail.map((c) => ({ ...c })),
     isDeficitFlagged: !!deficitRow,
     physicalCapacityCheck,
   };
@@ -340,7 +344,7 @@ export function findNearbyCapacityOptions(
     if (spareStudents <= 0) continue;
 
     options.push({
-      school: c,
+      school: { ...c },
       distanceMiles: Math.round(dist * 10) / 10,
       // Rough urban-commute estimate: ~4 min/mile (surface transit/walk mix) + 5 min baseline.
       estimatedCommuteMinutes: Math.round(dist * 4 + 5),
