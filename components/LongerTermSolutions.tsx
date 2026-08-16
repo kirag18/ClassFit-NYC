@@ -21,60 +21,60 @@ export default function LongerTermSolutions({
   return (
     <div className="space-y-6">
       {/* ---------------------------------------------------------- MEDIUM -- */}
-      <section className="rounded-lg border border-slate-200 bg-white p-5">
+      <section className="panel p-5">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-          <h2 className="text-base font-semibold text-slate-900">
+          <h2 className="text-base font-semibold text-white">
             Nearby schools with room
           </h2>
-          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-200">
             Weeks–1 semester
           </span>
         </div>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-white/50 mb-4">
           Same school type, within 3 miles, under 90% building utilization — and with real headroom
           left in the classes they already run.
         </p>
 
         {nearbyOptions.length === 0 ? (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-white/50">
             No schools of the same type within 3 miles have room to take students without pushing
             their own classes over cap.
           </p>
         ) : (
           <>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 mb-3">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-3">
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-2xl font-bold text-slate-900">
+                <span className="text-2xl font-bold text-white">
                   {totalSpare.toLocaleString()}
                 </span>
-                <span className="text-sm text-slate-700">
+                <span className="text-sm text-white/80">
                   students could be absorbed across {nearbyOptions.length} nearby school
                   {nearbyOptions.length === 1 ? "" : "s"} without any of them going over cap
                 </span>
               </div>
             </div>
 
-            <div className="max-h-96 overflow-y-auto rounded-md border border-slate-200 bg-slate-50 p-2 space-y-2">
+            <div className="max-h-96 overflow-y-auto rounded-xl border border-white/10 bg-white/5 p-2 space-y-2">
               {nearbyOptions.map((o) => (
-                <div key={o.school.dbn} className="rounded-md border border-slate-200 bg-white p-3">
+                <div key={o.school.dbn} className="panel p-3">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
                       <Link
                         href={`/school/${o.school.dbn}`}
-                        className="text-sm font-medium text-blue-700 hover:underline"
+                        className="text-sm font-medium text-violet-300 hover:underline"
                       >
                         {o.school.name}
                       </Link>
-                      <div className="text-xs text-slate-500">
+                      <div className="text-xs text-white/50">
                         {o.school.dbn} · District {o.school.district}
                         {o.sameDistrict ? " (same district)" : ""} · {o.utilizationPct}% utilized
                       </div>
                     </div>
-                    <span className="shrink-0 text-sm font-semibold text-green-700">
+                    <span className="shrink-0 text-sm font-semibold text-emerald-300">
                       room for ~{o.spareStudents.toLocaleString()}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-600 mt-1.5">
+                  <div className="text-xs text-white/65 mt-1.5">
                     ~{o.distanceMiles} mi away · ~{o.estimatedCommuteMinutes} min added commute
                     {o.buildingIsBinding && (
                       <>
@@ -93,7 +93,7 @@ export default function LongerTermSolutions({
           </>
         )}
 
-        <p className="text-xs text-slate-500 italic mt-3">
+        <p className="text-xs text-white/50 italic mt-3">
           Capacity is <strong>cap × classes − students</strong> per grade band, at each band&apos;s
           own cap (20 K-3, 23 4-8, 25 high school), then bounded by the building&apos;s Blue Book
           capacity. High school figures are course seats, so they&apos;re divided by that
@@ -104,14 +104,14 @@ export default function LongerTermSolutions({
       </section>
 
       {/* ------------------------------------------------------------ SLOW -- */}
-      <section className="rounded-lg border border-slate-200 bg-white p-5">
+      <section className="panel p-5">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-          <h2 className="text-base font-semibold text-slate-900">New construction</h2>
-          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+          <h2 className="text-base font-semibold text-white">New construction</h2>
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/15 text-red-300">
             3–5+ years
           </span>
         </div>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-white/50 mb-4">
           The most durable fix, and the slowest — dependent on capital funding, site approval, and
           construction. No SCA capital plan project is loaded for this school — supply capital plan
           data to show funded seat additions and real timelines here.
@@ -119,10 +119,10 @@ export default function LongerTermSolutions({
 
         {siteCandidates.length > 0 && (
           <>
-            <h3 className="text-sm font-semibold text-slate-800 mb-1.5">
+            <h3 className="text-sm font-semibold text-white/90 mb-1.5">
               Unused city-owned land nearby worth investigating
             </h3>
-            <div className="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-900 mb-2">
+            <div className="rounded-xl bg-amber-500/10 border border-amber-500/25 px-3 py-2 text-xs text-amber-200 mb-2">
               <strong>Illustrative starting points only</strong> — not a siting recommendation. Real
               siting runs through SCA Real Estate Services, a 45-day public comment period, and
               Community Board / CEC hearings.
@@ -146,27 +146,27 @@ export default function LongerTermSolutions({
 
             <div className="space-y-2">
               {siteCandidates.map((p) => (
-                <div key={p.parcel_id} className="rounded-md border border-slate-200 p-3">
+                <div key={p.parcel_id} className="rounded-xl border border-white/10 p-3">
                   <div className="flex flex-wrap items-start justify-between gap-2">
-                    <div className="text-sm font-medium text-slate-900">
+                    <div className="text-sm font-medium text-white">
                       {p.description ?? (
-                        <span className="text-slate-500 italic">No address recorded in COLP</span>
+                        <span className="text-white/50 italic">No address recorded in COLP</span>
                       )}
                     </div>
-                    <span className="shrink-0 text-xs text-slate-500">~{p.distanceMiles} mi away</span>
+                    <span className="shrink-0 text-xs text-white/50">~{p.distanceMiles} mi away</span>
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5">
+                  <div className="text-xs text-white/50 mt-0.5">
                     {[p.borough, p.ownership].filter(Boolean).join(" · ")}
                   </div>
 
                   <dl className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
                     <div className="flex gap-1.5">
-                      <dt className="text-slate-500 shrink-0">BBL:</dt>
-                      <dd className="font-mono text-slate-800">{p.bbl ?? "—"}</dd>
+                      <dt className="text-white/50 shrink-0">BBL:</dt>
+                      <dd className="font-mono text-white/90">{p.bbl ?? "—"}</dd>
                     </div>
                     <div className="flex gap-1.5">
-                      <dt className="text-slate-500 shrink-0">Coordinates:</dt>
-                      <dd className="font-mono text-slate-800">
+                      <dt className="text-white/50 shrink-0">Coordinates:</dt>
+                      <dd className="font-mono text-white/90">
                         {p.lat.toFixed(6)}, {p.lng.toFixed(6)}
                       </dd>
                     </div>
@@ -177,7 +177,7 @@ export default function LongerTermSolutions({
                       href={`https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
+                      className="text-violet-300 hover:underline"
                     >
                       Open in Maps →
                     </a>
@@ -188,14 +188,14 @@ export default function LongerTermSolutions({
                         )}/${Number(p.bbl.slice(6))}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-violet-300 hover:underline"
                       >
                         View lot on ZoLa →
                       </a>
                     )}
                   </div>
 
-                  <div className="text-xs text-slate-500 mt-1.5">
+                  <div className="text-xs text-white/50 mt-1.5">
                     {p.lot_sqft && p.estimatedSeats
                       ? `${p.lot_sqft.toLocaleString()} sqft lot · very roughly ~${p.estimatedSeats.toLocaleString()} seats if built out`
                       : "Lot area isn't published in COLP, so buildable capacity is unknown — check the BBL on ZoLa for the lot dimensions."}
@@ -208,19 +208,19 @@ export default function LongerTermSolutions({
       </section>
 
       {/* ------------------------------------------------------- ADMIN GUIDE -- */}
-      <section className="rounded-lg border border-slate-200 bg-white p-5 flex items-center justify-between flex-wrap gap-3">
+      <section className="panel p-5 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-base font-semibold text-slate-900">
+          <h2 className="text-base font-semibold text-white">
             Process &amp; policy: exemptions, staffing, restructuring
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-white/50">
             How to file for a class-size exemption, what the expedited resolution timeline requires,
             staffing funds and pay differentials, and capital requests.
           </p>
         </div>
         <Link
           href="/admin-guide"
-          className="shrink-0 inline-flex items-center rounded-md bg-slate-900 text-white text-sm font-medium px-4 py-2 hover:bg-slate-800"
+          className="shrink-0 inline-flex items-center rounded-xl bg-black/40 text-white text-sm font-medium px-4 py-2 hover:bg-black/60"
         >
           Administrator guide →
         </Link>

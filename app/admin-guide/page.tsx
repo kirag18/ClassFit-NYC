@@ -11,8 +11,8 @@ interface Source {
 
 function SourceList({ sources }: { sources: Source[] }) {
   return (
-    <div className="mt-3 pt-3 border-t border-slate-100">
-      <div className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">Sources</div>
+    <div className="mt-3 pt-3 border-t border-white/10">
+      <div className="text-[11px] uppercase tracking-wide text-white/35 mb-1">Sources</div>
       <ul className="space-y-0.5">
         {sources.map((s) => (
           <li key={s.url}>
@@ -20,7 +20,7 @@ function SourceList({ sources }: { sources: Source[] }) {
               href={s.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-blue-600 hover:underline"
+              className="text-xs text-violet-300 hover:underline"
             >
               {s.label} ↗
             </a>
@@ -43,14 +43,14 @@ function Section({
   sources: Source[];
 }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5">
+    <section className="panel p-5">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <h2 className="text-base font-semibold text-slate-900">{title}</h2>
-        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+        <h2 className="text-base font-semibold text-white">{title}</h2>
+        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-white/10 text-white/65">
           {timeline}
         </span>
       </div>
-      <div className="text-sm text-slate-700 space-y-3">{children}</div>
+      <div className="text-sm text-white/80 space-y-3">{children}</div>
       <SourceList sources={sources} />
     </section>
   );
@@ -60,20 +60,20 @@ export default function AdminGuidePage() {
   return (
     <div className="mx-auto max-w-4xl w-full px-6 py-6 space-y-6">
       <div>
-        <Link href="/" className="text-sm text-blue-600 hover:underline">
+        <Link href="/" className="text-sm text-violet-300 hover:underline">
           ← Back to map &amp; search
         </Link>
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Administrator guide</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-white">Administrator guide</h1>
+        <p className="text-sm text-white/50 mt-1">
           Process and policy options for school leaders working on class size compliance —
           exemptions, staffing, restructuring, and capital requests.
         </p>
       </div>
 
-      <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <div className="rounded-2xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
         <strong>Verify before acting.</strong> This is a plain-language summary compiled from
         public NYCPS, NYSED, UFT, and news sources, with links below each section. Policy here
         changed materially in 2026 and continues to evolve. Confirm current requirements and
@@ -109,7 +109,7 @@ export default function AdminGuidePage() {
           The phase-in benchmarks are now roughly <strong>70% for 2026–27</strong>, 80% for
           2027–28, 90% for 2028–29, and 100% by 2029–30.
         </p>
-        <p className="text-slate-600">
+        <p className="text-white/65">
           Practically: your school does not have to hit 100% on its own next year. The question is
           whether your classes count toward the citywide percentage, or fall under an exemption.
         </p>
@@ -134,7 +134,7 @@ export default function AdminGuidePage() {
         ]}
       >
         <p>The law recognizes four exemption categories:</p>
-        <ul className="list-disc list-inside space-y-1 text-slate-700">
+        <ul className="list-disc list-inside space-y-1 text-white/80">
           <li>
             <strong>Space</strong> — the building physically lacks room to comply. Critically, this
             must be paired with a capital plan: exemptions are intended for schools where{" "}
@@ -153,7 +153,7 @@ export default function AdminGuidePage() {
             fiscal hardship.
           </li>
         </ul>
-        <p className="text-slate-600">
+        <p className="text-white/65">
           If you are pursuing a <strong>space</strong> exemption, expect to document the capital
           side. A space claim without a corresponding capital request is the weakest version of
           the argument — the law explicitly ties space constraints to capital budget targeting.
@@ -195,10 +195,10 @@ export default function AdminGuidePage() {
             elective/specialty classes can be negotiated if a majority of school staff approve.
           </li>
         </ul>
-        <p className="text-slate-600">
+        <p className="text-white/65">
           The practical takeaway: fixes you can execute in the first two weeks (room reallocation,
           section rebalancing) keep you out of arbitration. Use the{" "}
-          <Link href="/" className="text-blue-600 hover:underline">
+          <Link href="/" className="text-violet-300 hover:underline">
             school pages
           </Link>{" "}
           to identify which bands are over and by how much before day 1.
@@ -279,7 +279,7 @@ export default function AdminGuidePage() {
             the Comptroller&apos;s office has published guidance on doing this inclusively.
           </li>
         </ul>
-        <p className="text-slate-600">
+        <p className="text-white/65">
           These are slow and politically involved — they require community engagement and, for
           co-location changes, public hearings. Start them a full planning cycle ahead.
         </p>
@@ -310,14 +310,14 @@ export default function AdminGuidePage() {
           <strong>45-day public comment period</strong>, a notice of filing in the City Record, and
           invitations to Community Boards and District CECs to hold hearings.
         </p>
-        <p className="text-slate-600">
+        <p className="text-white/65">
           Because space exemptions are meant to pair with planned-and-sited capital projects,
           getting your building into the capital plan is often the thing that makes a space
           exemption defensible. Work through your superintendent and CEC.
         </p>
       </Section>
 
-      <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
+      <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-white/65">
         Compiled August 2026 from public sources. ClassFit NYC is an independent tool and is not
         affiliated with NYC Public Schools, the SCA, NYSED, or the UFT.
       </div>

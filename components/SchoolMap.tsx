@@ -55,16 +55,16 @@ function SchoolMarkers({
             center={[s.lat, s.lng]}
             radius={isHighlighted ? radius + 4 : radius}
             pathOptions={{
-              color: isHighlighted ? "#1e293b" : status.color,
+              color: isHighlighted ? "#f4f2fb" : status.color,
               weight: isHighlighted ? 3 : 0.5,
               fillColor: status.color,
-              fillOpacity: 0.75,
+              fillOpacity: 0.85,
             }}
           >
             <Popup>
               <div className="text-sm">
-                <div className="font-semibold text-slate-900">{s.name}</div>
-                <div className="text-slate-500 text-xs mb-1">
+                <div className="font-semibold text-white">{s.name}</div>
+                <div className="text-white/45 text-xs mb-1">
                   {s.dbn} &middot; District {s.district} &middot; {s.borough}
                 </div>
                 <div className="flex items-center gap-1.5 mb-1">
@@ -72,9 +72,9 @@ function SchoolMarkers({
                     className="inline-block w-2.5 h-2.5 rounded-full"
                     style={{ backgroundColor: status.color }}
                   />
-                  <span>{status.label}</span>
+                  <span className="text-white/80">{status.label}</span>
                 </div>
-                <div className="text-xs text-slate-600 mb-2">
+                <div className="text-xs text-white/60 mb-2">
                   {s.physicalCapacityCheck
                     ? `${s.worstBand}: ${formatPhysicalCapacityGap(s.physicalCapacityCheck)}`
                     : s.worstBand
@@ -83,7 +83,7 @@ function SchoolMarkers({
                 </div>
                 <Link
                   href={`/school/${s.dbn}`}
-                  className="text-blue-600 hover:underline text-xs font-medium"
+                  className="text-violet-300 hover:text-violet-200 hover:underline text-xs font-medium"
                 >
                   View school details →
                 </Link>
@@ -108,11 +108,11 @@ export default function SchoolMap({
       center={NYC_CENTER}
       zoom={11}
       scrollWheelZoom
-      className="h-full w-full rounded-lg"
+      className="h-full w-full rounded-xl"
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
       />
       <FitToSchools schools={schools} />
       <SchoolMarkers schools={schools} highlightedDbn={highlightedDbn} />

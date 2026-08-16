@@ -10,7 +10,7 @@ import SchoolListItem from "./SchoolListItem";
 const SchoolMap = dynamic(() => import("./SchoolMap"), {
   ssr: false,
   loading: () => (
-    <div className="h-full w-full rounded-lg bg-slate-100 animate-pulse flex items-center justify-center text-slate-400 text-sm">
+    <div className="h-full w-full rounded-2xl bg-white/5 animate-pulse flex items-center justify-center text-white/35 text-sm">
       Loading map…
     </div>
   ),
@@ -66,10 +66,12 @@ export default function HomeExplorer() {
   }, [schools, query, sort]);
 
   return (
-    <div className="flex-1 flex flex-col mx-auto max-w-7xl w-full px-6 py-5 gap-4">
+    <div className="flex-1 flex flex-col mx-auto max-w-7xl w-full px-4 sm:px-6 py-6 gap-5">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Find a school</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <h1 className="text-2xl font-semibold text-white">
+          Find a school
+        </h1>
+        <p className="text-sm text-white/50 mt-1 max-w-3xl">
           Search by school name or DBN, or browse the map. Color shows how far each school is from
           the class size mandate cap — for most schools, by average class size; for high schools
           where classrooms can physically fit everyone under cap, by real room shortfall instead
@@ -78,17 +80,29 @@ export default function HomeExplorer() {
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by school name or DBN (e.g. PS 8, 13K008)…"
-          className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
-        />
+        <div className="relative flex-1">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            strokeWidth="1.8"
+            stroke="currentColor"
+            className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35 pointer-events-none"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.35-4.35" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by school name or DBN (e.g. PS 8, 13K008)…"
+            className="w-full rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-xl pl-10 pr-3 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-violet-400/60"
+          />
+        </div>
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+          className="rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-400/60 [&>option]:bg-[#1a1330] [&>option]:text-white"
         >
           <option value="gap-desc">Sort: Most overcrowded first</option>
           <option value="name-asc">Sort: School name (A-Z)</option>
@@ -96,11 +110,13 @@ export default function HomeExplorer() {
         </select>
       </div>
 
-      <ComplianceLegend />
+      <div className="panel px-4 py-3">
+        <ComplianceLegend />
+      </div>
 
       {sourceYears.length > 0 && (
-        <div className="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-900">
-          <strong>Data vintage:</strong> class size figures are from{" "}
+        <div className="rounded-xl bg-amber-500/10 border border-amber-500/25 px-3.5 py-2.5 text-xs text-amber-200">
+          <strong className="text-amber-100">Data vintage:</strong> class size figures are from{" "}
           {sourceYears.join(" and ")} — the most recent school-level reports NYC Open Data
           publishes. They predate the class size mandate&apos;s phase-in, so these are historical
           baselines, not current compliance status.
@@ -108,7 +124,7 @@ export default function HomeExplorer() {
       )}
 
       {error && (
-        <div className="rounded-md bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2">
+        <div className="rounded-xl bg-red-500/10 border border-red-500/25 text-red-300 text-sm px-3.5 py-2.5">
           {error}
         </div>
       )}
@@ -116,17 +132,19 @@ export default function HomeExplorer() {
       {/* Height is bounded so the two panes scroll independently. Without this
           the list grows to fit every school and stretches the map to match --
           with ~1,500 schools that produced a ~90,000px-tall map. */}
-      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-4 h-[calc(100vh-280px)] min-h-[520px]">
-        <div className="border border-slate-200 rounded-lg bg-white overflow-y-auto h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-4 h-[calc(100vh-320px)] min-h-[520px]">
+        <div className="panel overflow-y-auto h-full">
           {!schools && !error && (
             <div className="p-4 space-y-2">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-14 rounded-md bg-slate-100 animate-pulse" />
+                <div key={i} className="h-14 rounded-xl bg-white/5 animate-pulse" />
               ))}
             </div>
           )}
           {schools && filtered.length === 0 && (
-            <div className="p-6 text-sm text-slate-500 text-center">No schools match &quot;{query}&quot;.</div>
+            <div className="p-6 text-sm text-white/50 text-center">
+              No schools match &quot;{query}&quot;.
+            </div>
           )}
           {schools && (
             <div className="p-2 space-y-1">
@@ -138,11 +156,11 @@ export default function HomeExplorer() {
             </div>
           )}
         </div>
-        <div className="rounded-lg overflow-hidden border border-slate-200 h-full min-h-[400px]">
+        <div className="panel overflow-hidden h-full min-h-[400px] p-1.5">
           {schools ? (
             <SchoolMap schools={filtered} highlightedDbn={hovered} />
           ) : (
-            <div className="h-full w-full bg-slate-100 animate-pulse" />
+            <div className="h-full w-full rounded-xl bg-white/5 animate-pulse" />
           )}
         </div>
       </div>

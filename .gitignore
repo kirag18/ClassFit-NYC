@@ -40,7 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# generated data (run `npm run setup:data` to regenerate)
-/data/*.db
+# generated data (run `npm run setup:data` or `npm run fetch:real && npm run load:data` to regenerate)
+# classfit.db IS committed on purpose -- Railway's build sandbox can't reliably
+# run better-sqlite3's write path, so the DB is built locally and shipped as-is.
 /data/*.db-*
 /data/raw/

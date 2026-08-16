@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #0d0817;
+  --foreground: #f4f2fb;
 }
 
 @theme inline {
@@ -12,14 +12,84 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  color-scheme: dark;
+}
+
 body {
-  background: var(--background);
+  background:
+    radial-gradient(1100px 620px at 88% -8%, rgba(168, 120, 255, 0.28), transparent 60%),
+    radial-gradient(900px 560px at -10% 12%, rgba(45, 212, 191, 0.16), transparent 55%),
+    radial-gradient(1200px 800px at 50% 120%, rgba(124, 58, 237, 0.18), transparent 60%),
+    var(--background);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Leaflet popups should inherit the app's font/sizing instead of its defaults */
+/* Reusable glass card used across the app in place of the old white/border cards */
+.panel {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.55);
+}
+
+.gradient-accent {
+  background-image: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 45%, #2dd4bf 100%);
+}
+
+.gradient-accent-text {
+  background-image: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 45%, #5eead4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+::selection {
+  background: rgba(167, 139, 250, 0.35);
+}
+
+/* Slim, unobtrusive scrollbars that fit the dark theme */
+* {
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  scrollbar-width: thin;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Leaflet popups should inherit the app's font/sizing, and match the dark theme
+   instead of Leaflet's default white box. */
 .leaflet-popup-content {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   margin: 10px 12px;
+}
+.leaflet-popup-content-wrapper {
+  background: #1a1330;
+  color: #f4f2fb;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+}
+.leaflet-popup-tip {
+  background: #1a1330;
+}
+.leaflet-popup-close-button {
+  color: rgba(244, 242, 251, 0.6) !important;
+}
+.leaflet-popup-close-button:hover {
+  color: #f4f2fb !important;
+}
+.leaflet-container {
+  background: #150e26 !important;
 }

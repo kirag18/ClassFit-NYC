@@ -64,7 +64,7 @@ export default function SpaceToolkit({
 
   return (
     <div>
-      <div className="flex gap-1 border-b border-slate-200 mb-4">
+      <div className="flex gap-1 border-b border-white/10 mb-4">
         {(
           [
             ["split", "Split a room"],
@@ -78,8 +78,8 @@ export default function SpaceToolkit({
             onClick={() => setTab(key)}
             className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px ${
               tab === key
-                ? "border-slate-900 text-slate-900"
-                : "border-transparent text-slate-500 hover:text-slate-700"
+                ? "border-violet-400 text-white"
+                : "border-transparent text-white/50 hover:text-white/80"
             }`}
           >
             {label}
@@ -135,8 +135,8 @@ function SplitTab({
   if (candidates.length === 0) {
     return (
       <div className="space-y-3">
-        <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 space-y-2">
-          <p className="font-medium text-slate-800">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/65 space-y-2">
+          <p className="font-medium text-white/90">
             No rooms in this building are big enough to split
           </p>
           <p>
@@ -158,7 +158,7 @@ function SplitTab({
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-white/65">
         A room only ever hosts one section, so it seats no more than the mandate cap of{" "}
         <strong>{targetCap}</strong> — however large it is. Divide an oversized room and each half
         runs its own section, turning unusable floor area into compliant seats. Pick which rooms to
@@ -168,17 +168,17 @@ function SplitTab({
       <div className="flex flex-wrap gap-2">
         <button
           onClick={selectAll}
-          className="px-3 py-1.5 rounded-md border border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50"
+          className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/[0.05] backdrop-blur-xl text-xs font-medium text-white/80 hover:bg-white/5"
         >
           Select all splittable rooms
         </button>
         <button
           onClick={() => setSelection({})}
-          className="px-3 py-1.5 rounded-md border border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50"
+          className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/[0.05] backdrop-blur-xl text-xs font-medium text-white/80 hover:bg-white/5"
         >
           Clear
         </button>
-        <span className="text-xs text-slate-500 self-center">
+        <span className="text-xs text-white/50 self-center">
           {candidates.length} splittable room group{candidates.length === 1 ? "" : "s"} — scroll the
           list
         </span>
@@ -186,30 +186,30 @@ function SplitTab({
 
       {/* Bounded so a building with dozens of splittable room groups doesn't
           push the running total -- and everything below it -- off the page. */}
-      <div className="max-h-80 overflow-y-auto rounded-md border border-slate-200 bg-slate-50 p-2 space-y-2">
+      <div className="max-h-80 overflow-y-auto rounded-xl border border-white/10 bg-white/5 p-2 space-y-2">
         {candidates.map((c) => {
           const selected = Math.min(c.room_count, Math.floor(selection[c.key] ?? 0));
           return (
             <div
               key={c.key}
-              className={`rounded-md border p-3 ${
-                selected > 0 ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white"
+              className={`rounded-xl border p-3 ${
+                selected > 0 ? "border-sky-500/30 bg-sky-500/10" : "border-white/10 bg-white/[0.05] backdrop-blur-xl"
               }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
                 <div>
-                  <span className="text-sm font-medium text-slate-900">{c.room_type}</span>
-                  <span className="text-xs text-slate-500 ml-2">
+                  <span className="text-sm font-medium text-white">{c.room_type}</span>
+                  <span className="text-xs text-white/50 ml-2">
                     {c.sqft.toLocaleString()} sqft · {c.room_count} room
                     {c.room_count === 1 ? "" : "s"} this size
                   </span>
                 </div>
-                <span className="text-xs font-semibold text-green-700">
+                <span className="text-xs font-semibold text-emerald-300">
                   +{c.seatsGainedPerRoom} seats per room
                 </span>
               </div>
 
-              <div className="text-xs text-slate-600 mb-2">
+              <div className="text-xs text-white/65 mb-2">
                 Fits {c.physicalCapacity} by floor area, but seats only{" "}
                 <strong>{c.seatsNow}</strong> today (one section, capped at {targetCap}). Split{" "}
                 {c.pieces} ways → {c.pieces} × {STUDENTS_PER_PIECE} ={" "}
@@ -217,20 +217,20 @@ function SplitTab({
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-600">Split</span>
+                <span className="text-xs text-white/65">Split</span>
                 <input
                   type="range"
                   min={0}
                   max={c.room_count}
                   value={selected}
                   onChange={(e) => setCount(c.key, Number(e.target.value))}
-                  className="flex-1 max-w-[200px] accent-slate-900"
+                  className="flex-1 max-w-[200px] accent-violet-400"
                 />
-                <span className="text-xs font-medium text-slate-900 tabular-nums w-16">
+                <span className="text-xs font-medium text-white tabular-nums w-16">
                   {selected} of {c.room_count}
                 </span>
                 {selected > 0 && (
-                  <span className="text-xs font-semibold text-green-700 tabular-nums">
+                  <span className="text-xs font-semibold text-emerald-300 tabular-nums">
                     +{selected * c.seatsGainedPerRoom} seats
                   </span>
                 )}
@@ -241,15 +241,15 @@ function SplitTab({
       </div>
 
       <div
-        className={`rounded-lg border p-4 ${
-          plan.seatsGained > 0 ? "border-green-200 bg-green-50" : "border-slate-200 bg-slate-50"
+        className={`rounded-2xl border p-4 ${
+          plan.seatsGained > 0 ? "border-emerald-500/25 bg-emerald-500/10" : "border-white/10 bg-white/5"
         }`}
       >
         {plan.seatsGained > 0 ? (
           <>
             <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-2xl font-bold text-slate-900">+{plan.seatsGained}</span>
-              <span className="text-sm text-slate-700">
+              <span className="text-2xl font-bold text-white">+{plan.seatsGained}</span>
+              <span className="text-sm text-white/80">
                 seats from splitting {plan.roomsSplit} room{plan.roomsSplit === 1 ? "" : "s"} — the
                 equivalent of{" "}
                 <strong>
@@ -259,12 +259,12 @@ function SplitTab({
                 at the cap of {targetCap}.
               </span>
             </div>
-            <p className="text-sm text-slate-600 mt-1">
+            <p className="text-sm text-white/65 mt-1">
               Net room count rises by {plan.roomsAdded} (each split room becomes several).
             </p>
           </>
         ) : (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-white/65">
             Select rooms above to see how many seats splitting them would add.
           </p>
         )}
@@ -272,7 +272,7 @@ function SplitTab({
 
       <ImplausibleNotice rooms={implausible} />
 
-      <p className="text-xs text-slate-500 italic">
+      <p className="text-xs text-white/50 italic">
         Rough feasibility only, from measured floor area at {MIN_SQFT_PER_PUPIL} sqft/pupil (
         {MIN_SQFT_PER_PUPIL_KINDERGARTEN} for kindergarten). No NYC dataset publishes a per-room
         seat count, so capacity is derived from area. A real split also needs egress, HVAC,
@@ -294,7 +294,7 @@ function ImplausibleNotice({ rooms }: { rooms: ReturnType<typeof findImplausible
   const total = rooms.reduce((sum, r) => sum + r.room_count, 0);
 
   return (
-    <div className="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-900">
+    <div className="rounded-xl bg-amber-500/10 border border-amber-500/25 px-3 py-2 text-xs text-amber-200">
       <strong>
         {total} room{total === 1 ? "" : "s"} excluded as too large to be one room
       </strong>{" "}
@@ -321,8 +321,8 @@ function ImplausibleNotice({ rooms }: { rooms: ReturnType<typeof findImplausible
 function RepurposeTab({ suggestions }: { suggestions: FastTrackSuggestion[] }) {
   if (suggestions.length === 0) {
     return (
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 space-y-2">
-        <p className="font-medium text-slate-800">Nothing to repurpose here</p>
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/65 space-y-2">
+        <p className="font-medium text-white/90">Nothing to repurpose here</p>
         <p>
           Either this school already runs enough sections to stay under cap, or its building has no
           specialty rooms (library, art, music, labs) recorded that could take a core class.
@@ -333,7 +333,7 @@ function RepurposeTab({ suggestions }: { suggestions: FastTrackSuggestion[] }) {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-white/65">
         The fastest capacity in most buildings is a room that already exists and is used for
         something else. These are ordered least-disruptive first — each one costs a program
         something, which is why the trade-off is named.
@@ -341,25 +341,25 @@ function RepurposeTab({ suggestions }: { suggestions: FastTrackSuggestion[] }) {
 
       <div className="space-y-2">
         {suggestions.map((s) => (
-          <div key={s.id} className="rounded-md border border-slate-200 bg-white p-3">
+          <div key={s.id} className="panel p-3">
             <div className="flex items-start gap-2 mb-1">
-              <span className="shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded bg-slate-900 text-white">
+              <span className="shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded bg-black/40 text-white">
                 #{s.feasibilityRank}
               </span>
-              <span className="text-sm font-medium text-slate-900">{s.title}</span>
+              <span className="text-sm font-medium text-white">{s.title}</span>
             </div>
-            <p className="text-xs text-slate-600 mb-1.5">{s.description}</p>
-            <div className="text-xs text-slate-500 mb-1">
+            <p className="text-xs text-white/65 mb-1.5">{s.description}</p>
+            <div className="text-xs text-white/50 mb-1">
               Resolves {s.classesResolved} class{s.classesResolved === 1 ? "" : "es"} · ~
               {s.estimatedAdditionalTeachers} additional teacher
               {s.estimatedAdditionalTeachers === 1 ? "" : "s"} to staff them
             </div>
-            <p className="text-xs text-slate-500 italic">Trade-off: {s.tradeoff}</p>
+            <p className="text-xs text-white/50 italic">Trade-off: {s.tradeoff}</p>
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-slate-500 italic">
+      <p className="text-xs text-white/50 italic">
         A greedy heuristic, not an optimizer: it walks room types in a fixed order and takes the
         least-disruptive available option first, so it finds a fast, explainable plan rather than
         provably the best one. Room counts come from the Blue Book, which reports specialty rooms in
@@ -424,7 +424,7 @@ function ScheduleTab({
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-white/65">
         If the building runs more periods than any one student&apos;s schedule fills, cohorts can
         start at staggered times and share the same rooms across a longer day. The limit is the
         middle of the day, when every cohort is on site at once — everyone has to be in a classroom
@@ -434,50 +434,50 @@ function ScheduleTab({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <label className="text-sm">
-          <span className="block text-slate-600 mb-1">Periods offered in the day (P)</span>
+          <span className="block text-white/65 mb-1">Periods offered in the day (P)</span>
           <input
             type="number"
             min={1}
             value={periodsInDay}
             onChange={(e) => setPeriodsInDay(Number(e.target.value))}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
+            className="w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-violet-400/60"
           />
         </label>
         <label className="text-sm">
-          <span className="block text-slate-600 mb-1">Periods per student&apos;s schedule (L)</span>
+          <span className="block text-white/65 mb-1">Periods per student&apos;s schedule (L)</span>
           <input
             type="number"
             min={1}
             value={periodsPerStudent}
             onChange={(e) => setPeriodsPerStudent(Number(e.target.value))}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
+            className="w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-violet-400/60"
           />
         </label>
         <label className="text-sm">
-          <span className="block text-slate-600 mb-1">Total students (N)</span>
+          <span className="block text-white/65 mb-1">Total students (N)</span>
           <input
             type="number"
             min={0}
             value={totalStudents}
             onChange={(e) => setTotalStudents(Number(e.target.value))}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
+            className="w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-violet-400/60"
           />
-          <span className="block text-xs text-slate-400 mt-1">
+          <span className="block text-xs text-white/35 mt-1">
             {headcountAvailable
               ? "Blue Book enrollment for this school."
               : "Not in the Blue Book — enter the real headcount."}
           </span>
         </label>
         <label className="text-sm">
-          <span className="block text-slate-600 mb-1">Cafeteria capacity (Caf)</span>
+          <span className="block text-white/65 mb-1">Cafeteria capacity (Caf)</span>
           <input
             type="number"
             min={0}
             value={cafeteriaCapacity}
             onChange={(e) => setCafeteriaCapacity(Number(e.target.value))}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
+            className="w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-violet-400/60"
           />
-          <span className="block text-xs text-slate-400 mt-1">
+          <span className="block text-xs text-white/35 mt-1">
             {cafeteriaSqft
               ? `${cafeteriaSqft.toLocaleString()} sqft ÷ ${SQFT_PER_CAFETERIA_SEAT} sqft/person = ${derivedCaf}. A legal ceiling, not installed seats.`
               : "No cafeteria on record for this building."}
@@ -485,8 +485,8 @@ function ScheduleTab({
         </label>
       </div>
 
-      <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-        <strong className="text-slate-800">Classroom seats: {classroomSeats.toLocaleString()}</strong>{" "}
+      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/65">
+        <strong className="text-white/90">Classroom seats: {classroomSeats.toLocaleString()}</strong>{" "}
         across {roomCount.toLocaleString()} instructional rooms — each room&apos;s own measured
         capacity, capped at {targetCap}.
         {seatsFromSplits > 0 && (
@@ -496,31 +496,31 @@ function ScheduleTab({
       </div>
 
       {result.invalid ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div className="rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4 text-sm text-amber-200">
           A student&apos;s schedule (L = {periodsPerStudent}) can&apos;t be longer than the day
           itself (P = {periodsInDay}). Raise P or lower L.
         </div>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-slate-200 bg-white p-3">
-              <div className="text-2xl font-bold text-slate-900">{result.cohorts}</div>
-              <div className="text-xs text-slate-600">
+            <div className="panel p-3">
+              <div className="text-2xl font-bold text-white">{result.cohorts}</div>
+              <div className="text-xs text-white/65">
                 staggered cohorts possible (P − L + 1)
               </div>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-white p-3">
-              <div className="text-2xl font-bold text-slate-900">
+            <div className="panel p-3">
+              <div className="text-2xl font-bold text-white">
                 {Math.max(0, result.overlapPeriods)}
               </div>
-              <div className="text-xs text-slate-600">
+              <div className="text-xs text-white/65">
                 periods where all cohorts overlap (2L − P)
               </div>
             </div>
           </div>
 
           {result.noFullOverlap ? (
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900">
+            <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-4 text-sm text-emerald-200">
               <strong>Fits by construction.</strong> With {periodsInDay} periods and{" "}
               {periodsPerStudent}-period schedules, no single period has every cohort on site — the
               earliest cohort has left before the latest arrives. Peak load is never the full
@@ -528,10 +528,10 @@ function ScheduleTab({
             </div>
           ) : (
             <div
-              className={`rounded-lg border p-4 text-sm ${
+              className={`rounded-2xl border p-4 text-sm ${
                 result.fits
-                  ? "border-green-200 bg-green-50 text-green-900"
-                  : "border-red-200 bg-red-50 text-red-800"
+                  ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-200"
+                  : "border-red-500/25 bg-red-500/10 text-red-300"
               }`}
             >
               {result.fits ? (
@@ -568,7 +568,7 @@ function ScheduleTab({
         </>
       )}
 
-      <p className="text-xs text-slate-500 italic">
+      <p className="text-xs text-white/50 italic">
         A peak-load check, not a bell schedule: it says whether everyone fits at the busiest moment,
         not how sections map to rooms and periods. Staggered days also disrupt family routines,
         transportation, after-school programs, and staff contracts — a serious lever, not a quick
@@ -603,7 +603,7 @@ function TeachersTab({ bands }: { bands: ClassSizeRecord[] }) {
 
   if (bands.length === 0) {
     return (
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/65">
         No class size data on file for this school, so section and staffing needs can&apos;t be
         estimated.
       </div>
@@ -612,22 +612,22 @@ function TeachersTab({ bands }: { bands: ClassSizeRecord[] }) {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-white/65">
         Compliance is bought in sections: every grade band needs enough of them that no class runs
         over cap. Teachers follow from sections — but not one-to-one, since a teacher covers several
         sections a day.
       </p>
 
       <label className="text-sm block max-w-xs">
-        <span className="block text-slate-600 mb-1">Sections one teacher covers per day</span>
+        <span className="block text-white/65 mb-1">Sections one teacher covers per day</span>
         <input
           type="number"
           min={1}
           value={sectionsPerTeacher}
           onChange={(e) => setSectionsPerTeacher(Number(e.target.value))}
-          className="w-full rounded-md border border-slate-300 px-3 py-2"
+          className="w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-violet-400/60"
         />
-        <span className="block text-xs text-slate-400 mt-1">
+        <span className="block text-xs text-white/35 mt-1">
           Default {DEFAULT_SECTIONS_PER_TEACHER}: the UFT high school programmed day is 5 teaching
           periods plus a professional period and a prep. Elementary and middle assignments differ.
         </span>
@@ -635,10 +635,10 @@ function TeachersTab({ bands }: { bands: ClassSizeRecord[] }) {
 
       <div className="space-y-2">
         {rows.map(({ band, result }) => (
-          <div key={band.grade_band} className="rounded-md border border-slate-200 bg-white p-3">
+          <div key={band.grade_band} className="panel p-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1.5">
-              <span className="text-sm font-medium text-slate-900">Grades {band.grade_band}</span>
-              <span className="text-xs text-slate-500">
+              <span className="text-sm font-medium text-white">Grades {band.grade_band}</span>
+              <span className="text-xs text-white/50">
                 cap {band.target_cap} · currently {band.num_classes.toLocaleString()}{" "}
                 {isCourseSectionBand(band.grade_band) ? "core sections" : "classes"} averaging{" "}
                 {result.currentAvgClassSize.toFixed(1)}
@@ -646,22 +646,22 @@ function TeachersTab({ bands }: { bands: ClassSizeRecord[] }) {
             </div>
 
             {result.alreadyCompliant ? (
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-emerald-300">
                 Already runs enough sections ({result.sectionsNeeded.toLocaleString()} needed,{" "}
                 {band.num_classes.toLocaleString()} running) — no additional hiring implied.
               </p>
             ) : (
               <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
-                <span className="text-slate-700">
+                <span className="text-white/80">
                   Needs <strong>{result.sectionsNeeded.toLocaleString()}</strong> sections →{" "}
-                  <strong className="text-slate-900">
+                  <strong className="text-white">
                     +{result.additionalSections.toLocaleString()}
                   </strong>{" "}
                   to create
                 </span>
-                <span className="text-slate-700">
+                <span className="text-white/80">
                   ÷ {sectionsPerTeacher} per teacher ={" "}
-                  <strong className="text-slate-900">
+                  <strong className="text-white">
                     {result.additionalTeachers.toLocaleString()} teacher
                     {result.additionalTeachers === 1 ? "" : "s"}
                   </strong>
@@ -673,42 +673,42 @@ function TeachersTab({ bands }: { bands: ClassSizeRecord[] }) {
       </div>
 
       <div
-        className={`rounded-lg border p-4 ${
-          totalTeachers > 0 ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"
+        className={`rounded-2xl border p-4 ${
+          totalTeachers > 0 ? "border-orange-500/25 bg-orange-500/10" : "border-emerald-500/25 bg-emerald-500/10"
         }`}
       >
         {totalTeachers > 0 ? (
           <>
             <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-2xl font-bold text-slate-900">{totalTeachers}</span>
-              <span className="text-sm text-slate-700">
+              <span className="text-2xl font-bold text-white">{totalTeachers}</span>
+              <span className="text-sm text-white/80">
                 additional teacher{totalTeachers === 1 ? "" : "s"} to cover{" "}
                 {totalSections.toLocaleString()} new section
                 {totalSections === 1 ? "" : "s"} across all grade bands
               </span>
             </div>
-            <p className="text-sm text-slate-700 mt-1">
+            <p className="text-sm text-white/80 mt-1">
               Very roughly <strong>${(totalCost / 1_000_000).toFixed(2)}M</strong> a year at an
               assumed ${AVG_TEACHER_SALARY.toLocaleString()} average base salary.
             </p>
           </>
         ) : (
-          <p className="text-sm text-green-900">
+          <p className="text-sm text-emerald-200">
             Every grade band already runs enough sections to stay under cap — no additional hiring
             implied by class size alone.
           </p>
         )}
       </div>
 
-      <div className="rounded-md bg-slate-50 border border-slate-200 px-3 py-2 text-xs text-slate-600">
-        <strong className="text-slate-800">Scale check:</strong> NYCPS has estimated needing{" "}
+      <div className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white/65">
+        <strong className="text-white/90">Scale check:</strong> NYCPS has estimated needing{" "}
         {CITYWIDE_TEACHER_ESTIMATE.low.toLocaleString()}–
         {CITYWIDE_TEACHER_ESTIMATE.high.toLocaleString()} additional teachers to fully comply with
         the law citywide. A single school&apos;s figure should be a small fraction of that — useful
         for sanity-checking the order of magnitude, not for comparing schools.
       </div>
 
-      <p className="text-xs text-slate-500 italic">
+      <p className="text-xs text-white/50 italic">
         The salary figure is one flat constant for order-of-magnitude only. Real cost depends on
         each hire&apos;s step and differentials, and pension, health, and payroll taxes add roughly
         another 35–45% on top of base that this doesn&apos;t include. It also assumes teachers can
