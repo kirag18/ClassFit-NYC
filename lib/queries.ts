@@ -97,14 +97,14 @@ export function computeHsPhysicalCapacity(
 /** All schools with a computed compliance-gap summary, for the map + search list. */
 export function listSchoolSummaries(): SchoolSummary[] {
   const db = getDb();
-  const schools = db.prepare(`SELECT * FROM schools ORDER BY name`).all() as School[];
-  const records = db.prepare(`SELECT * FROM class_size_records`).all() as ClassSizeRecord[];
+  const schools = db.prepare(`SELECT * FROM schools ORDER BY name`).all() as unknown as School[];
+  const records = db.prepare(`SELECT * FROM class_size_records`).all() as unknown as ClassSizeRecord[];
   const deficitSet = new Set(
-    (db.prepare(`SELECT dbn FROM space_deficit_schools`).all() as { dbn: string }[]).map((r) => r.dbn)
+    (db.prepare(`SELECT dbn FROM space_deficit_schools`).all() as unknown as { dbn: string }[]).map((r) => r.dbn)
   );
   const capacityDetail = db
     .prepare(`SELECT building_id, room_type, sqft, room_count FROM room_capacity_detail`)
-    .all() as (CapacityDetailRow & { building_id: string })[];
+    .all() as unknown as (CapacityDetailRow & { building_id: string })[];
 
   const recordsByDbn = new Map<string, ClassSizeRecord[]>();
   for (const r of records) {
@@ -162,7 +162,7 @@ export function listSourceYears(): string[] {
       `SELECT DISTINCT source_year FROM class_size_records
        WHERE source_year IS NOT NULL AND source_year != '' ORDER BY source_year`
     )
-    .all() as { source_year: string }[];
+    .all() as unknown as { source_year: string }[];
   return rows.map((r) => r.source_year);
 }
 
@@ -185,24 +185,24 @@ export interface SchoolDetail {
 
 export function getSchoolDetail(dbn: string): SchoolDetail | null {
   const db = getDb();
-  const school = db.prepare(`SELECT * FROM schools WHERE dbn = ?`).get(dbn) as School | undefined;
+  const school = db.prepare(`SELECT * FROM schools WHERE dbn = ?`).get(dbn) as unknown as School | undefined;
   if (!school) return null;
 
   const bands = db
     .prepare(`SELECT * FROM class_size_records WHERE dbn = ? ORDER BY grade_band`)
-    .all(dbn) as ClassSizeRecord[];
+    .all(dbn) as unknown as ClassSizeRecord[];
 
   const building = db
     .prepare(`SELECT * FROM building_utilization WHERE building_id = ?`)
-    .get(school.building_id) as BuildingUtilization | undefined;
+    .get(school.building_id) as unknown as BuildingUtilization | undefined;
 
   const rooms = db
     .prepare(`SELECT * FROM room_inventory WHERE building_id = ? ORDER BY room_type`)
-    .all(school.building_id) as RoomInventoryRow[];
+    .all(school.building_id) as unknown as RoomInventoryRow[];
 
   const capacityDetail = db
     .prepare(`SELECT room_type, sqft, room_count FROM room_capacity_detail WHERE building_id = ?`)
-    .all(school.building_id) as CapacityDetailRow[];
+    .all(school.building_id) as unknown as CapacityDetailRow[];
 
   // Suspect records (source-data artifacts) are excluded here too, same as
   // listSchoolSummaries -- they shouldn't drive the physical-capacity check
@@ -305,12 +305,12 @@ export function findNearbyCapacityOptions(
   utilizationThresholdPct = 90
 ): NearbyCapacityOption[] {
   const db = getDb();
-  const origin = db.prepare(`SELECT * FROM schools WHERE dbn = ?`).get(dbn) as School | undefined;
+  const origin = db.prepare(`SELECT * FROM schools WHERE dbn = ?`).get(dbn) as unknown as School | undefined;
   if (!origin) return [];
 
   const candidates = db
     .prepare(`SELECT * FROM schools WHERE dbn != ? AND school_type = ?`)
-    .all(dbn, origin.school_type) as School[];
+    .all(dbn, origin.school_type) as unknown as School[];
 
   const bandStmt = db.prepare(`SELECT * FROM class_size_records WHERE dbn = ?`);
   const buildingStmt = db.prepare(`SELECT * FROM building_utilization WHERE building_id = ?`);
@@ -320,11 +320,11 @@ export function findNearbyCapacityOptions(
     const dist = distanceMiles(origin.lat, origin.lng, c.lat, c.lng);
     if (dist > radiusMiles) continue;
 
-    const building = buildingStmt.get(c.building_id) as BuildingUtilization | undefined;
+    const building = buildingStmt.get(c.building_id) as unknown as BuildingUtilization | undefined;
     if (!building || building.utilization_pct >= utilizationThresholdPct) continue;
 
     const { spareStudents: sectionHeadroom, usedCourseSeatConversion } = computeSpareSeats(
-      bandStmt.all(c.dbn) as ClassSizeRecord[],
+      bandStmt.all(c.dbn) as unknown as ClassSizeRecord[],
       c.enrollment
     );
 
@@ -380,10 +380,10 @@ export interface SiteCandidate extends Parcel {
  */
 export function findSiteCandidates(dbn: string, radiusMiles = 2): SiteCandidate[] {
   const db = getDb();
-  const origin = db.prepare(`SELECT * FROM schools WHERE dbn = ?`).get(dbn) as School | undefined;
+  const origin = db.prepare(`SELECT * FROM schools WHERE dbn = ?`).get(dbn) as unknown as School | undefined;
   if (!origin) return [];
 
-  const parcels = db.prepare(`SELECT * FROM parcels`).all() as Parcel[];
+  const parcels = db.prepare(`SELECT * FROM parcels`).all() as unknown as Parcel[];
 
   return parcels
     .map((p) => ({
